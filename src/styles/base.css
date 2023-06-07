@@ -13,6 +13,8 @@ a {
   text-decoration: none;
 }
 
-.van-grid-item__content {
-  width: 200px !important;
+#app,
+html,
+body {
+  background-color: #f3f4f5;
 }

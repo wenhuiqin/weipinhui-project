@@ -15,8 +15,11 @@
       </template>
       <!-- 右边自定义内容 -->
       <template #right>
-        <RouterLink to="/center">
-          <van-icon class="icon" name="friends-o" size="20" style="color:gray" />
+        <RouterLink to="/center" v-if="is_login">
+          <van-icon  class="icon" name="friends-o" size="20" style="color:gray" />
+        </RouterLink>
+        <RouterLink to="/login" v-else>
+          登录
         </RouterLink>
         <RouterLink to="/cate">
           <van-icon class="icon" name="apps-o" size="20"  style="color:gray" />
@@ -29,8 +32,9 @@
       class="search-box"
       v-else-if="$route.meta.search"
       shape="round"
-      background="#4fc08d"
-      placeholder="请输入搜索关键词">
+      background="#f02387"
+      placeholder="搜索商品或品牌"
+      @focus="$router.push('/search')">
     </van-search>
     
     <!-- 其他样式头部 -->
@@ -39,28 +43,64 @@
       @click-left="$router.back()"
       left-arrow>
       <template #title v-if="title">{{ title }}</template>
-      <template #right v-if="$route.meta.homeIcon ? 'true' : ''">
-        <van-icon name="shop-o" />
+      <template #title v-else-if="$route.meta.searchButton">
+        <van-search
+          class="search-box"
+          shape="round"
+          placeholder="请输入搜索关键词"
+          @focus="$router.push('/search')">
+        </van-search>
+      </template>
+      <template #right >
+        <van-icon  class="shopIcon" name="shop-o" v-if="$route.meta.homeIcon" @click="$router.push('/home')"/>
+        <van-button class="searchButton" v-else-if="$route.meta.searchButton">搜索</van-button>
       </template>
     </van-nav-bar>
-
   </div>
 </template>
 
 <script lang="ts" setup>
+import { onMounted,ref } from 'vue';
 import { useRoute,useRouter } from 'vue-router';
+import { getUserInfo } from "@/apis/users"
 const $route = useRoute()
 const $router = useRouter()
+
+// 存储登录状态变量
+const is_login = ref<boolean>(true)
 
 // 定义一个接口
 type Props = {
   title?:string
 }
 
+// 查看登录状态
+const testLogin = async () => {
+
+  // 拿到 token 和 user_id 信息
+  const token = window.localStorage.getItem('token')
+  const id = window.localStorage.getItem('user_id')
+
+  // 判断 token 和 id 是否存在
+  if (!token || !id) {
+    is_login.value = false
+    return
+  }
+  const res = await getUserInfo(id)
+  console.log(res);
+}
+
 // 接收参数
 const info = withDefaults(defineProps<Props>(),{})
 
 console.log(info);
+
+// 挂载完成后
+onMounted(()=>{
+  
+  // 查看登录状态
+  testLogin()
+})
 
 </script>
 
@@ -79,4 +119,13 @@ console.log(info);
 .icon{
   margin: 0 5px;
 }
+
+.searchButton{
+  height: 30px;
+}
+.shopIcon{
+  font-size: 25px;
+  color: black;
+}
+
 </style>

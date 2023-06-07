@@ -41,6 +41,21 @@ const router = createRouter({
       meta: {
         homeIcon: "true"
       }
+    },
+    // 登录页
+    {
+      path: "/login",
+      name: "Login",
+      component: () => import("@/views/loginPage/loginPage.vue")
+    },
+    // 搜索页
+    {
+      path: "/search",
+      name: "Search",
+      component: () => import("@/views/searchPage/searchPage.vue"),
+      meta: {
+        searchButton: "true"
+      }
     }
   ]
 })
