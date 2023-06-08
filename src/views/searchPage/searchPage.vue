@@ -2,7 +2,8 @@
   <div class="searchPage">
     <!-- 搜索页头部 -->
     <Teleport to="header">
-      <header-component></header-component>
+      <header-component 
+      :hotSearchWords="hotSearchWords"></header-component>
     </Teleport>
     <!-- 搜索关键词 -->
     <ul v-if="false" class="search-list-box">
@@ -17,10 +18,10 @@
     <div :class="{ 'hidden': false,'box': true, 'search-history-box': true }">
       <div class="top">
         <p>最近搜索</p>
-        <van-icon name="delete-o" />
+        <van-icon name="delete-o" @click="clearSearchHandler" />
       </div>
       <ul class="bottom">
-        <li v-for="item in 10" :key="item">111</li>
+        <li v-for="item in searchData" :key="item">{{ item }}</li>
       </ul>
     </div>
     <!-- 热门搜索 -->
@@ -33,7 +34,8 @@
         <ul v-if="changeState" >
           <li          
           v-for="item in hotSearchWords" 
-          :key="item.num">
+          :key="item.num"
+          @click="addSearchHandler(item.keyword)">
           {{ item.keyword || '暂无' }}
         </li>
         </ul>
@@ -49,6 +51,9 @@
 import { onMounted, ref } from 'vue';
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import { hotWords } from '@/apis/goods';
+import { useRouter } from 'vue-router';
+
+const $router = useRouter();
 // 定义热词接口
 interface Props {
   num:number
@@ -62,6 +67,9 @@ interface goodsInfo{
 // 存储搜索热词
 const hotSearchWords = ref<Array<Props>>([])
 
+// 存储搜索的历史记录
+const searchData = ref<string[]>([])
+
 // 搜索 与 隐藏 状态切换
 const changeState = ref<boolean>(true)
 
@@ -74,9 +82,28 @@ const getHotWords = async() => {
   console.log(hotSearchWords.value);
 }
 
+// 清除历史搜索记录
+const clearSearchHandler = () => {
+  window.localStorage.removeItem("history")
+  searchData.value = []
+}
+
+// 添加历史记录
+const addSearchHandler = (keyword:string) => {
+  console.log(keyword);
+  if(keyword.trim() === "") return
+  searchData.value.unshift(keyword)
+  searchData.value = [...new Set(searchData.value)]
+  console.log(searchData.value);
+  window.localStorage.setItem("history",JSON.stringify(searchData.value));
+  $router.push({path:"/list",query:{keyword}})
+}
+
 // 挂载
 onMounted( () => {
   getHotWords()
+  // 从 localStorage 内拿到内容赋值给 searchHistoryList
+  searchData.value = JSON.parse(window.localStorage.getItem('history') || '[]') || []
 })
 </script>
 
@@ -125,8 +152,14 @@ onMounted( () => {
     > .top {
       display: flex;
       justify-content: space-between;
-      height: 20px;
+      height: 40px;
       align-items: center;
+      overflow: hidden;
+
+      p{
+        background-color: red;
+        margin: 20px 0;
+      }
 
       p:last-child {
         font-size: 14px;
@@ -141,6 +174,7 @@ onMounted( () => {
       padding-top: 10px;
 
       > ul {
+        margin: 20px 0;
         display: flex;
         flex-wrap: wrap;
       }

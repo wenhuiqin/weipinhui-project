@@ -1,26 +1,29 @@
 <template>
   <div class="home-page">
-    <!-- 个人中心头部 -->
-    <Teleport to="header">
-      <header-component></header-component>
-    </Teleport>
-    <!-- 头像框 -->
-    <div class="avatar-box">
-      <van-image
-        round
-        width="100px"
-        height="100px"
-        src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"/>
-      <p>唯品会会员</p>
-    </div>
-    <!-- 功能导航栏 -->
-    <van-grid :column-num="3" class="grid-box">
-      <van-grid-item 
-        v-for="item in navBarData" 
-        :key="item.id" 
-        :icon="item.icon" 
-        :text="item.title" />
-    </van-grid>
+    <van-sticky>
+      <!-- 个人中心头部 -->
+      <Teleport to="header">
+        <header-component></header-component>
+      </Teleport>
+      <!-- 头像框 -->
+      <div class="avatar-box">
+        <van-image
+          round
+          width="100px"
+          height="100px"
+          src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"/>
+        <p>{{ userName }}</p>
+      </div>
+      <!-- 功能导航栏 -->
+      <van-grid :column-num="3" class="grid-box">
+        <van-grid-item 
+          v-for="item in navBarData" 
+          :key="item.id" 
+          :icon="item.icon" 
+          :text="item.title" />
+      </van-grid>
+    </van-sticky>
+    
     <!-- 功能列表 -->
     <div class="nav-box" v-for="item in navListData" :key="item.id">
       <span>{{ item.title }}</span>
@@ -28,7 +31,7 @@
     </div>
     <!-- 退出登录 -->
     <van-button 
-      type="success"
+      color="#de3d96"
       class="logout-button" 
       block
       @click="logoutHandler">
@@ -39,10 +42,20 @@
 
 <script lang="ts" setup>
 import HeaderComponent from '@/components/HeaderComponent.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { getUserInfo } from '@/apis/users';
 
 const $router = useRouter()
+
+// 存储用户名变量
+const userName = window.localStorage.getItem("username") || "请您登录"
+
+// 定义接口
+interface goodsInfo {
+  code:string
+  message:string
+}
 
 // 功能导航栏接口
 interface Props{
@@ -84,6 +97,7 @@ const navListData = ref<Array<Props>>([
 const logoutHandler = () => {
   window.localStorage.removeItem("token")
   window.localStorage.removeItem("user_id")
+  window.localStorage.setItem("is_login",JSON.stringify("false"))
   $router.push("/home")
 }
 
@@ -98,13 +112,16 @@ const logoutHandler = () => {
   background: url("https://img2.baidu.com/it/u=34933945,2081064043&fm=253&fmt=auto&app=138&f=JPEG?w=831&h=500") no-repeat;
   background-size: cover;
   color: aliceblue;
+  p {
+    height: 40px;
+  }
 }
 .grid-box{
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(128, 128, 128,0.5);
 }
 .nav-box{
-  height: 50px;
+  height: 100px;
   line-height: 50px;
   display: flex;
   justify-content: space-between;

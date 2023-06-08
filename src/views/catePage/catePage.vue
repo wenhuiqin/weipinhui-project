@@ -3,13 +3,16 @@
     <Teleport to="header">
       <header-component></header-component>
     </Teleport>
-    <van-sidebar v-model="active">
-      <van-sidebar-item
-      v-for="item in cateListData"
-      :key="item"
-      :title="item"
-       />
-    </van-sidebar>
+    <div class="cate-box">
+      <van-sidebar v-model="active">
+        <van-sidebar-item
+        v-for="item in cateListData"
+        :key="item"
+        :title="item"
+        />
+      </van-sidebar>
+      <div>1111</div>
+    </div>
   </div>
 </template>
 
@@ -45,5 +48,9 @@ onMounted( () => {
 <style lang="scss" scoped>
 .van-sidebar-item--select:before {
   background-color: #f02387;
+}
+
+.cate-box {
+  display: flex;
 }
 </style>

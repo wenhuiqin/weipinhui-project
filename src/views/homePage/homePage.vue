@@ -10,145 +10,100 @@
       placeholder="请输入搜索关键词"
       @focus="$router.push('/search')"
     />
-    <!-- 分类滑动块 -->
-    <van-tabs v-model:active="active" color="#de3d96" :swipeable="true" title-active-color="#de3d96" :ellipsis="false">
-      <van-tab 
-      v-for="item in cateList" 
-      :title="item.title" 
-      :key="item.id"
-      class="tag-box">
-      <div class="content-box">
-        <p class="recommend-box"></p>
-        <p class="menu-box">
-          <van-image
-            v-for="item in 3"
-            class="menu-img-box"
-            :key="item"
-            width="33.33%"
-            height="135px"
-            fit="contain"
-            src="https://h2.appsimg.com/b.appsimg.com/upload/momin/2023/06/06/18/1686014231558_217x278_90.png"
-          />
-        </p>
-        <div class="hot-box">
-          <!-- <van-grid :column-num="5" class="hot-grid">
-            <van-grid-item v-for="value in 10" :key="value" icon="photo-o" text="文字" class="hot-grid" />
-          </van-grid> -->
-          <div class="hot-menu">
-            <span class="hot-grid" v-for="item in 10" :key="item">
-              <img src="" alt="">
-              <span class="text-box">文字</span>
-              </span>
-          </div>
-        </div>
-        <p class="list-box"></p>
-      </div>
+    <!-- 分类列表 -->
+    <van-tabs 
+      v-model:active="active" color="#de3d96" swipeable title-active-color="#de3d96" :ellipsis="false" animated @click-tab="getBrand">
+      <van-tab class="tag-box" v-for="item in cateList" :title="item" :key="item" >
+        <!-- 推荐区 -->
+        <recommend-list :killsList="killsList" :recommendListData="recommendListData"></recommend-list>
+        <!-- 列表区 -->
+        <goods-list :brandList="brandList"></goods-list>
       </van-tab>
     </van-tabs>
-    
-    <!-- 内容 -->
-    <goods-list></goods-list>
- 
+
     <!-- 底部 -->
-    <div class="footer">
-      <RouterLink to="/cart" class="icon-box"><van-icon name="cart-o" /></RouterLink>
-      <van-back-top class="icon-box" />
-    </div>
+    <footer-box></footer-box>
+
   </div>
 </template>
 
 <script lang="ts" setup>
 
 // 导入文件
-import {ref} from "vue"
+import {ref, onMounted} from "vue"
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import goodsList from "./components/goodsList.vue"
-import { RouterLink } from 'vue-router';
+import recommendList from "./components/recommendList.vue";
+import footerBox from "./components/footerBox.vue"
+import { getCategorylist, getBrandList, getKillList, getRecommendList } from "@/apis/goods"
 
-// 准备分类数据
-const cateList = ref([
-  {id:1,title:"推荐",link:"/home/recommend"},
-  {id:2,title:"618年中特卖节",link:"/home/recommend"},
-  {id:3,title:"3折疯抢",link:"/home/recommend"},
-  {id:4,title:"唯品快抢",link:"/home/recommend"},
-  {id:5,title:"国际",link:"/home/recommend"},
-])
-
+// 存储分类数据
+const cateList = ref([])
+// 存储当前选中的分类
+let currentCate = ref<string>("手机")
+// 存储品牌数据
+const brandList = ref([])
+// 存储秒杀列表
+const killsList = ref([])
+// 存储推荐列表
+const recommendListData = ref([])
+// 挂载后 渲染手机列表
+const defaultBrand = ref<string>("手机")
+// 默认 选中手机列表
 const active = ref<number>(0)
+
+// 定义接口
+interface goodsInfo {
+  code:string
+  message:string
+}
+
+// 定义品牌列表接口
+interface brandInfo {
+  title?:string
+}
+
+// 获取分类列表
+const getCateList = async () =>{
+  const res = await getCategorylist()
+  console.log(res);
+  if((res as unknown as goodsInfo).code !== "200") return
+  cateList.value = res.data
+}
+
+// 获取品牌列表
+const getBrand = async (info:brandInfo) => {
+  // 存储当前选中的分类
+  currentCate.value = info.title as string
+  const res = await getBrandList(info.title|| "手机")
+  if((res as unknown as goodsInfo).code !== "200") return
+  // 存储当前分类下的品牌列表
+  brandList.value = res.data
+
+}
+
+// 获取秒杀列表
+const killList = async() => {
+  const res = await getKillList(10)
+  if((res as unknown as goodsInfo).code !== "200") return
+  killsList.value = res.data
+}
+
+// 获取推荐列表
+const recommendData = async () => {
+  const res = await getRecommendList(3)
+  if((res as unknown as goodsInfo).code !== "200") return
+  console.log(res);
+  recommendListData.value = res.data
+}
+
+onMounted( () => {
+  getCateList()
+  getBrand(defaultBrand as unknown as brandInfo )
+  killList()
+  recommendData()
+})
+
 </script>
 
-<style lang="scss" scoped>
-.content-box{
-  height: 415px;
-  .recommend-box{
-  background: url("https://h2.appsimg.com/b.appsimg.com/upload/momin/2023/06/05/165/1685956047312_750x165_90.png") no-repeat;
-  background-size: contain;
-  height: 80px;
-  margin-top: 5px;
-  margin-bottom: 0;
-}
-  .menu-box{
-    background: url("https://h2.appsimg.com/b.appsimg.com/upload/momin/2023/06/06/70/1686014300747_750x310_90.png") no-repeat;
-    background-size: cover;
-    height: 150px;
-    margin-top: -1px;
-    margin-bottom: 0;
-    >.menu-img-box{
-      margin-top: 10px;
-    }
-
-  }
-  .hot-box{
-    background:url("https://h2.appsimg.com/b.appsimg.com/upload/momin/2023/06/05/71/1685956596202_750x407_90.png") no-repeat;
-    background-size:cover;
-    height: 170px;
-    width: 100%;
-    margin-bottom: 0;
-    margin-top: -1px;
-
-    >.hot-menu{
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      text-align: center;
-      width: 90%;
-      height: 100%;
-      margin: 0 auto;
-      >.hot-grid{
-      width: 17%;
-      height: 52px;
-      margin:1px;
-      margin-top: 34px;
-      margin-bottom: 0;
-      background-color: red;
-      border-radius: 50%;
-    }
-    }
-    
-  }
-
-}
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: 50px;
-  font-size: 30px;
-  display: flex;
-  text-align: center;
-  line-height: 40px;
-  justify-content: space-between;
-  padding: 0 15px;
-  box-sizing: border-box;
-  margin-bottom: 30px;
-  >.icon-box {
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    color: white;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

@@ -56,6 +56,16 @@ const router = createRouter({
       meta: {
         searchButton: "true"
       }
+    },
+    // 列表页
+    {
+      path: "/list",
+      name: "List",
+      component: () => import("@/views/listPage/listPage.vue"),
+      meta: {
+        home: "true",
+        list: "true"
+      }
     }
   ]
 })
