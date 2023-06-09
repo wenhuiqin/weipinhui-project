@@ -4,7 +4,7 @@
     <p class="recommend-box"></p>
       <ul class="menu-box">
         <li v-for="item in recommendListData" :key="item" class="menu-img-box">
-          <img :src="item.img2" alt="">
+          <img :src="item.img3" alt="">
           <p>￥ {{ item.originprice }}</p>
         </li>
       </ul>

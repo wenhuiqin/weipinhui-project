@@ -16,4 +16,7 @@ export const getKillList = (num: number) => instance.get("pro/seckilllist", { pa
 export const getRecommendList = (num: number) => instance.get("pro/recommendlist", { params: { count: 1, limitNum: num } })
 
 // 获取搜索列表
-export const getSearchList = (keywords: string) => instance.get("pro/search", { params: { count: 1, limitNum: 10, keyword: keywords } })
+export const getSearchList = (count: number, keywords: string) => instance.get("pro/search", { params: { count: count, limitNum: 10, keyword: keywords } })
+
+// 获取产品详情
+export const getDetailList = (id: string) => instance.get(`pro/detail/${id}`)

@@ -97,6 +97,7 @@ const recommendData = async () => {
   recommendListData.value = res.data
 }
 
+
 onMounted( () => {
   getCateList()
   getBrand(defaultBrand as unknown as brandInfo )

@@ -9,7 +9,9 @@ const instance = axios.create({
 
 // 创建接口数组
 const list: Array<string> = [
-  "user/info"
+  "user/info",
+  "cart/list",
+  "cart/add"
 ]
 
 // 设置 响应 和 请求 拦截器

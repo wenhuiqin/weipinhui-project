@@ -17,16 +17,16 @@
         <!-- 右边自定义内容 -->
         <template #right>
           <RouterLink to="/center" v-if="is_login">
-            <van-icon  class="icon" name="friends-o" size="20" style="color:gray" />
+            <van-icon  class="shopIcon" name="friends-o" size="20" style="color:gray" />
           </RouterLink>
           <RouterLink to="/login" v-else>
             登录
-          </RouterLink>
+          </RouterLink>&emsp;
           <RouterLink to="/home" v-if="$route.meta.list">
             <van-icon  class="shopIcon" style="color:gray" name="shop-o"/>
           </RouterLink>
           <RouterLink to="/cate" v-else>
-            <van-icon class="icon" name="apps-o"  style="color:gray" />
+            <van-icon class="shopIcon" name="apps-o"  style="color:gray" />
           </RouterLink>
         </template>
       </van-nav-bar>
@@ -52,17 +52,39 @@
             class="search-box"
             shape="round"
             placeholder="请输入搜索关键词"
-            @focus="$router.push('/search')
-            " v-model="keywords">
+            @focus="$router.push('/search')" 
+            v-model="searchText"
+            @update:model-value="searchChangeHandler">
           </van-search>
         </template>
         <template #right >
           <van-icon  class="shopIcon" style="color:gray" name="shop-o" v-if="$route.meta.homeIcon" @click="$router.push('/home')"/>
           <van-button 
-          class="searchButton" v-else-if="$route.meta.searchButton"
+          class="searchButton" 
+          v-else-if="$route.meta.searchButton"
+          @click="searchHandler"
           >搜索</van-button>
+          <div v-else-if="$route.meta.detail">
+            <van-icon 
+            class="shopIcon" 
+            style="color:gray" 
+            name="like-o"
+            @click="favoriteHandler"
+            />&emsp;
+            <van-icon 
+            class="shopIcon" 
+            style="color:gray" 
+            name="share-o"
+            @click="showShare=true" />
+          </div>
         </template>
       </van-nav-bar>
+      <!-- 分享面板 -->
+      <van-share-sheet
+        v-model:show="showShare"
+        title="立即分享给好友"
+        :options="options"
+      />
     </div>
   </van-sticky>
 </template>
@@ -71,16 +93,22 @@
 import { onMounted,ref } from 'vue';
 import { useRoute,useRouter } from 'vue-router';
 import { getUserInfo } from "@/apis/users"
+import { showSuccessToast } from 'vant';
 const $route = useRoute()
 const $router = useRouter()
-
-const keywords = ref("")
-console.log(keywords.value);
 
 // 存储登录状态变量
 const is_login = ref<boolean>(true)
 
-// 存储
+// 分享面板
+const showShare = ref<boolean>(false)
+const options = [
+      { name: '微信', icon: 'wechat' },
+      { name: '微博', icon: 'weibo' },
+      { name: '复制链接', icon: 'link' },
+      { name: '分享海报', icon: 'poster' },
+      { name: '二维码', icon: 'qrcode' },
+    ];
 
 // 定义一个接口
 type Props = {
@@ -107,6 +135,28 @@ const testLogin = async () => {
 // 接收参数
 const info = withDefaults(defineProps<Props>(),{})
 console.log(info);
+// 定义事件遥控器
+const emit = defineEmits(['searchChangeHandler','searchHandler'])
+
+// 关联搜索的关键字
+const searchText = ref<string>('')
+
+// 搜索框内内容发生变化的时候触发
+const searchChangeHandler = () => {
+
+  // 需要把我搜索关键字的内容传递到 父组件内 使用
+  emit('searchChangeHandler', searchText.value.trim())
+}
+
+// 搜索
+const searchHandler = () => {
+  emit('searchHandler',searchText.value.trim())
+}
+
+// 加入收藏
+const favoriteHandler = () => {
+  showSuccessToast("已成功加入收藏清单,快去看看吧!")
+}
 
 // 挂载完成后
 onMounted(()=>{

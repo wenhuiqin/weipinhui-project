@@ -66,6 +66,15 @@ const router = createRouter({
         home: "true",
         list: "true"
       }
+    },
+    // 详情页
+    {
+      path: "/detail",
+      name: "Detail",
+      component: () => import("@/views/detailPage/detailPage.vue"),
+      meta: {
+        detail: true
+      }
     }
   ]
 })

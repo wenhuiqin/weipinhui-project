@@ -3,15 +3,17 @@
     <!-- 搜索页头部 -->
     <Teleport to="header">
       <header-component 
-      :hotSearchWords="hotSearchWords"></header-component>
+      :hotSearchWords="hotSearchWords"
+      @searchChangeHandler="searchChangeHandler"
+      @searchHandler="searchHandler"></header-component>
     </Teleport>
     <!-- 搜索关键词 -->
-    <ul v-if="false" class="search-list-box">
+    <ul v-if="listShow" class="search-list-box">
       <li
-        v-for="item in 8"
-        :key="item">
-        <span>{{ item }}</span>
-        <span>{{ item }}</span>
+        v-for="item in searchList"
+        :key="item.proid">
+        <span>{{ item.category }}</span>
+        <span>{{ item.brand }}</span>
       </li>
     </ul>
     <!-- 最近搜索 -->
@@ -21,7 +23,13 @@
         <van-icon name="delete-o" @click="clearSearchHandler" />
       </div>
       <ul class="bottom">
-        <li v-for="item in searchData" :key="item">{{ item }}</li>
+        <li 
+        v-for="item in searchData" 
+        :key="item"
+        @click="searchHandler(item)">
+        {{ item }}
+        
+      </li>
       </ul>
     </div>
     <!-- 热门搜索 -->
@@ -50,9 +58,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import HeaderComponent from '@/components/HeaderComponent.vue';
-import { hotWords } from '@/apis/goods';
+import { hotWords, getSearchList } from '@/apis/goods';
 import { useRouter } from 'vue-router';
-
+import { showFailToast } from 'vant';
 const $router = useRouter();
 // 定义热词接口
 interface Props {
@@ -64,8 +72,16 @@ interface goodsInfo{
   code:string
   message:string
 }
+interface searchInfo {
+  category:string
+  brand: string
+  proid:string
+}
 // 存储搜索热词
 const hotSearchWords = ref<Array<Props>>([])
+
+// 存储搜索的词
+const searchList = ref<Array<searchInfo>>([])
 
 // 存储搜索的历史记录
 const searchData = ref<string[]>([])
@@ -73,13 +89,15 @@ const searchData = ref<string[]>([])
 // 搜索 与 隐藏 状态切换
 const changeState = ref<boolean>(true)
 
+// 搜索列表状态
+const listShow = ref<boolean>(false)
+
 // 获取 搜索热词
 const getHotWords = async() => {
   const res = await hotWords()
   // console.log(res);
   if((res as unknown as goodsInfo).code !== "200") return
   hotSearchWords.value = res.data
-  console.log(hotSearchWords.value);
 }
 
 // 清除历史搜索记录
@@ -96,8 +114,42 @@ const addSearchHandler = (keyword:string) => {
   searchData.value = [...new Set(searchData.value)]
   console.log(searchData.value);
   window.localStorage.setItem("history",JSON.stringify(searchData.value));
-  $router.push({path:"/list",query:{keyword}})
+  searchHandler(keyword)
 }
+
+// 显示搜索的关键词列表
+const searchChangeHandler = async (text: string) => {
+  // 判断 text 为空
+  if (!text) {
+    listShow.value = false
+    return
+  }
+
+  // 替换关键字
+  text = text.replace('\\', '')
+
+  // 发送请求, 请求相关搜索关键字列表
+  const res = await getSearchList(1, text)
+  console.log(res)
+
+  // 判断, 如果没有对应关键字的内容
+  if ((res as unknown as goodsInfo).code === '10002') {
+    // 让搜索列表隐藏起来
+    listShow.value = false
+    showFailToast("没有相关内容, 请重新输入")
+    return
+  }
+  searchList.value = res.data
+  // 让搜索列表显示出来
+  listShow.value = true
+  
+}
+
+// 跳转至 列表页
+ const searchHandler = (text:string) => {
+  console.log("进行了搜索");
+  $router.push({path:"/list",query:{text}})
+ }
 
 // 挂载
 onMounted( () => {
@@ -131,7 +183,7 @@ onMounted( () => {
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
-      height: 20px;
+      height: 40px;
 
       :last-child {
         font-size: 12px;
@@ -157,8 +209,7 @@ onMounted( () => {
       overflow: hidden;
 
       p{
-        background-color: red;
-        margin: 20px 0;
+        margin: 30px 0;
       }
 
       p:last-child {
