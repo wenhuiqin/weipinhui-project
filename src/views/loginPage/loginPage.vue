@@ -13,22 +13,19 @@
           name="pattern"
           label="手机号"
           placeholder="请输入手机号"
-          :rules="[{ required: true, message: '请填写完整的手机号', pattern}]"
-        />
+          :rules="[{ required: true, message: '请填写完整的手机号', pattern}]" />
       </van-cell-group>
       <van-cell-group inset v-else>
         <van-field 
-        v-model="loginInfo.loginname" 
-        label="登录名" 
-        placeholder="请输入手机号或邮箱"
-        :rules="[{ required: true, message: '请填写正确的手机号或邮箱'}]"
-         />
+          v-model="loginInfo.loginname" 
+          label="登录名" 
+          placeholder="请输入手机号或邮箱"
+          :rules="[{ required: true, message: '请填写正确的手机号或邮箱'}]" />
         <van-field 
-        v-model="loginInfo.password" 
-        label="密码" 
-        placeholder="请输入密码"
-        :rules="[{ required: true, message: '请填写正确的密码'}]"
-        />
+          v-model="loginInfo.password" 
+          label="密码" 
+          placeholder="请输入密码"
+          :rules="[{ required: true, message: '请填写正确的密码'}]" />
       </van-cell-group>
       <div style="margin: 16px;">
         <van-button v-if="loginState" round block type="danger" native-type="submit" @click="sendMsgCodeHandler">
@@ -60,6 +57,7 @@
 </template>
 
 <script lang="ts" setup>
+
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -92,20 +90,22 @@ interface Users {
   loginname: string,
   password: string
 }
+
 // 用户密码登录
 const loginInfo = ref<Users>({
   loginname: "",
   password: ""
 })
+
 // 切换手机号登录 或 密码登录
 const changeLoginState = () => {
   loginState.value = ! loginState.value
 }
+
 // 发送验证码
 const sendMsgCodeHandler = async () => {
   // 必须 同意 服务协议
   if(!mobileChecked.value) return showFailToast("请阅读并同意服务协议")
-  // 
   if(!pattern.test(mobile.value as unknown as string)) return
   const res = await sendMsgCode(mobile.value as unknown as number)
   if((res as unknown as ResponseInfo).code !== "200") return
@@ -156,7 +156,6 @@ const submitHandler = async() => {
   console.log(loginInfo.value);
   const res = await loginHandler(loginInfo.value)
   console.log(res);
-  
   // 判断结果
   if ((res as unknown as ResponseInfo).code === '10011' || (res as unknown as ResponseInfo).code === '10010') {
     showFailToast((res as unknown as ResponseInfo).message)

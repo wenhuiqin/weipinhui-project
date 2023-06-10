@@ -8,8 +8,7 @@
     <van-search
       shape="round"
       placeholder="请输入搜索关键词"
-      @focus="$router.push('/search')"
-    />
+      @focus="$router.push('/search')" />
     <!-- 分类列表 -->
     <van-tabs 
       v-model:active="active" color="#de3d96" swipeable title-active-color="#de3d96" :ellipsis="false" animated @click-tab="getBrand">
@@ -23,7 +22,6 @@
 
     <!-- 底部 -->
     <footer-box></footer-box>
-
   </div>
 </template>
 
@@ -79,7 +77,6 @@ const getBrand = async (info:brandInfo) => {
   if((res as unknown as goodsInfo).code !== "200") return
   // 存储当前分类下的品牌列表
   brandList.value = res.data
-
 }
 
 // 获取秒杀列表
@@ -96,7 +93,6 @@ const recommendData = async () => {
   console.log(res);
   recommendListData.value = res.data
 }
-
 
 onMounted( () => {
   getCateList()

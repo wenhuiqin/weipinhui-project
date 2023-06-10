@@ -3,7 +3,7 @@
     <!-- 推荐区 -->
     <p class="recommend-box"></p>
       <ul class="menu-box">
-        <li v-for="item in recommendListData" :key="item" class="menu-img-box">
+        <li v-for="item in recommendListData" :key="item" class="menu-img-box"      @click="getSearchListHandler(item.brand)">
           <img :src="item.img3" alt="">
           <p>￥ {{ item.originprice }}</p>
         </li>
@@ -11,7 +11,7 @@
     <!-- 热销区 -->
     <div class="hot-box">
       <ul>
-        <li v-for="item in props.killsList" :key="item">
+        <li v-for="item in props.killsList" :key="item" @click="getSearchListHandler(item.proname)">
         <img :src="item.img1" alt="">
         </li>
       </ul>
@@ -19,7 +19,7 @@
     <!-- 特卖区 -->
     <div class="specialSale-box">
       <ul>
-        <li v-for="item in recommendListData" :key="item">
+        <li v-for="item in recommendListData" :key="item"  @click="getSearchListHandler(item.brand)">
          <img :src="item.img4" alt="">
          <b>{{ item.category }}</b>
          <span>{{ item.originprice }}</span>
@@ -30,7 +30,15 @@
 </template>
 
 <script lang="ts" setup>
+
+import { useRouter } from "vue-router";
+
 const props = defineProps(['killsList','recommendListData'])
+const $router = useRouter();
+
+const getSearchListHandler = (text:string) => {
+  $router.push({path:"/list",query:{text}})
+}
 
 </script>
 

@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts" setup>
+
 import { useRouter } from 'vue-router';
 import { showFailToast } from 'vant';
 
@@ -25,6 +26,7 @@ const pushHandler = () => {
   }
   $router.push("/cart")
 }
+
 </script>
 
 <style lang="scss" scoped>

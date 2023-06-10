@@ -8,8 +8,7 @@
     <van-search
       shape="round"
       :placeholder="keyword || '请输入搜索关键词'"
-      @focus="$router.push('/search')"
-    />
+      @focus="$router.push('/search')" />
     <!-- 筛选框 -->
     <van-grid direction="horizontal" :column-num="4">
       <van-grid-item>
@@ -94,6 +93,7 @@ interface ListProps {
   proname:string
   discount:number
 }
+
 // 获取列表
 const listData = ref<Array<ListProps>>([])
 console.log(listData);
@@ -111,6 +111,7 @@ const getList = async () => {
   flag.value = true
   loading.value = false
 }
+
 // onload
 const onLoad = () => {
   console.log("我触发了");

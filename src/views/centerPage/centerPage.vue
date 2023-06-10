@@ -42,20 +42,13 @@
 
 <script lang="ts" setup>
 import HeaderComponent from '@/components/HeaderComponent.vue';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getUserInfo } from '@/apis/users';
 
 const $router = useRouter()
 
 // 存储用户名变量
 const userName = window.localStorage.getItem("username") || "请您登录"
-
-// 定义接口
-interface goodsInfo {
-  code:string
-  message:string
-}
 
 // 功能导航栏接口
 interface Props{

@@ -7,22 +7,14 @@
     <!-- 轮播商品 -->
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
       <van-swipe-item>
-        <van-image
-          :src="goodsDetailInfo.img1"
-        />
+        <van-image :src="goodsDetailInfo.img1" />
       </van-swipe-item>
       <van-swipe-item>
-        <van-image
-          :src="goodsDetailInfo.img2"
-        />
+        <van-image :src="goodsDetailInfo.img2" />
       </van-swipe-item><van-swipe-item>
-        <van-image
-          :src="goodsDetailInfo.img3"
-        />
+        <van-image :src="goodsDetailInfo.img3" />
       </van-swipe-item><van-swipe-item>
-        <van-image
-          :src="goodsDetailInfo.img4"
-        />
+        <van-image :src="goodsDetailInfo.img4" />
       </van-swipe-item>
     </van-swipe>
     <!-- 价格条 -->
@@ -47,13 +39,14 @@
     <van-action-bar>
       <van-action-bar-icon icon="chat-o" text="客服" />
       <van-action-bar-icon icon="cart-o" text="购物车" @click="cartHandler"/>
-      <van-action-bar-button color="#f688a4" type="warning" text="加入购物车" @click="addCartHandler" />
+      <van-action-bar-button color="#f688a4" type="warning" text="加入购物车"      @click="addCartHandler" />
       <van-action-bar-button color="#f03867" type="danger" text="立即购买" />
     </van-action-bar>
   </div>
 </template>
 
 <script lang="ts" setup>
+
 import { onMounted, ref } from 'vue';
 import { useRoute,useRouter } from 'vue-router';
 import { getDetailList } from '@/apis/goods';
@@ -79,10 +72,12 @@ interface detailInfo {
 
 // 存储 id 变量
 const id = $route.query.id
+
 // 存储商品的详情数据
 const goodsDetailInfo = ref<detailInfo>({
   originprice:0
 })
+
 // 存储加入购物车的信息
 const addGoodsInfo = ref({
   userid: window.localStorage.getItem("User_id"),

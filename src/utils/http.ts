@@ -11,7 +11,9 @@ const instance = axios.create({
 const list: Array<string> = [
   "user/info",
   "cart/list",
-  "cart/add"
+  "cart/add",
+  "cart/remove",
+  'cart/selectone'
 ]
 
 // 设置 响应 和 请求 拦截器

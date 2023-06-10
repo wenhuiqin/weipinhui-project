@@ -1,4 +1,4 @@
-import instance from "@/utils/http"
+import instance from "@/utils/http";
 
 // 获取热门搜索
 export const hotWords = () => instance.get("pro/hotword")
@@ -20,3 +20,6 @@ export const getSearchList = (count: number, keywords: string) => instance.get("
 
 // 获取产品详情
 export const getDetailList = (id: string) => instance.get(`pro/detail/${id}`)
+
+// 获取某分类下某品牌的产品列表
+export const getGoodsList = (category: string, brand: string) => instance.get("pro/categorybrandprolist", { params: { category, brand } })

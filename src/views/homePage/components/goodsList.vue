@@ -1,6 +1,9 @@
 <template>
   <div class="goodsList" >
-    <div class="item-box" v-for="item in props.brandList" :key="item.brand">
+    <div class="item-box" 
+      v-for="item in props.brandList" 
+      :key="item.brand"
+      @click="getSearchListHandler(item.brand)">
       <img src="https://h2.appsimg.com/a.appsimg.com/upload/brand/upcb/2023/05/24/54/ias_ee4a2bc516314faaf48562dff7c6667a_1135x545_85.jpg" alt="">
       <div>
         <h4>{{ item.brand }}</h4>
@@ -11,7 +14,15 @@
 </template>
 
 <script lang="ts" setup>
+
+import { useRouter } from "vue-router";
+
 const props = defineProps(['brandList'])
+const $router = useRouter();
+
+const getSearchListHandler = (text:string) => {
+  $router.push({path:"/list",query:{text}})
+}
 
 </script>
 

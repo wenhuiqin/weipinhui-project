@@ -3,9 +3,10 @@
     <!-- 搜索页头部 -->
     <Teleport to="header">
       <header-component 
-      :hotSearchWords="hotSearchWords"
-      @searchChangeHandler="searchChangeHandler"
-      @searchHandler="searchHandler"></header-component>
+        :hotSearchWords="hotSearchWords"
+        @searchChangeHandler="searchChangeHandler"
+        @searchHandler="searchHandler">
+      </header-component>
     </Teleport>
     <!-- 搜索关键词 -->
     <ul v-if="listShow" class="search-list-box">
@@ -24,12 +25,11 @@
       </div>
       <ul class="bottom">
         <li 
-        v-for="item in searchData" 
-        :key="item"
-        @click="searchHandler(item)">
-        {{ item }}
-        
-      </li>
+          v-for="item in searchData" 
+          :key="item"
+          @click="searchHandler(item)">
+          {{ item }}
+        </li>
       </ul>
     </div>
     <!-- 热门搜索 -->
@@ -41,11 +41,11 @@
       <div class="bottom">
         <ul v-if="changeState" >
           <li          
-          v-for="item in hotSearchWords" 
-          :key="item.num"
-          @click="addSearchHandler(item.keyword)">
-          {{ item.keyword || '暂无' }}
-        </li>
+            v-for="item in hotSearchWords" 
+            :key="item.num"
+            @click="addSearchHandler(item.keyword)">
+            {{ item.keyword || '暂无' }}
+          </li>
         </ul>
         <p v-else>
           已隐藏搜索发现
@@ -56,11 +56,13 @@
 </template>
 
 <script lang="ts" setup>
+
 import { onMounted, ref } from 'vue';
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import { hotWords, getSearchList } from '@/apis/goods';
 import { useRouter } from 'vue-router';
 import { showFailToast } from 'vant';
+
 const $router = useRouter();
 // 定义热词接口
 interface Props {
@@ -77,6 +79,7 @@ interface searchInfo {
   brand: string
   proid:string
 }
+
 // 存储搜索热词
 const hotSearchWords = ref<Array<Props>>([])
 
@@ -141,8 +144,7 @@ const searchChangeHandler = async (text: string) => {
   }
   searchList.value = res.data
   // 让搜索列表显示出来
-  listShow.value = true
-  
+  listShow.value = true 
 }
 
 // 跳转至 列表页
@@ -157,6 +159,7 @@ onMounted( () => {
   // 从 localStorage 内拿到内容赋值给 searchHistoryList
   searchData.value = JSON.parse(window.localStorage.getItem('history') || '[]') || []
 })
+
 </script>
 
 <style lang="scss" scoped>
